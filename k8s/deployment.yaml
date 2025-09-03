@@ -16,7 +16,6 @@ spec:
     spec:
       containers:
         - name: brain-task-app
-          image: 235391889675.dkr.ecr.ap-south-1.amazonaws.com/aws-brain-task-app-docker:latest
+          image: <IMAGE_URI>
           ports:
             - containerPort: 80
-
