@@ -1,0 +1,12 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::EKS::Container
+      Properties:
+        TaskDefinition: ""
+hooks:
+  AfterAllowTestTraffic:
+    - location: scripts/deploy.sh
+      timeout: 300
+      runas: root
+
