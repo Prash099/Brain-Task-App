@@ -9,23 +9,24 @@ phases:
       - REPO_URI=235391889675.dkr.ecr.ap-south-1.amazonaws.com/aws-brain-task-app-docker
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
+
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -t $REPO_URI:$IMAGE_TAG .
       - docker push $REPO_URI:$IMAGE_TAG
-      
+
   post_build:
-  commands:
-    - echo "Updating deployment.yaml with new image..."
-    - sed -i "s|<IMAGE_URI>|$REPO_URI:$IMAGE_TAG|g" k8s/deployment.yaml
-    - echo "Deploying to EKS..."
-    - aws eks update-kubeconfig --region ap-south-1 --name brain-task-cluster
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/service.yaml
+    commands:
+      - echo Updating deployment.yaml with new image...
+      - sed -i "s|<IMAGE_URI>|$REPO_URI:$IMAGE_TAG|g" k8s/deployment.yaml
+      - echo Deploying to EKS...
+      - aws eks update-kubeconfig --region ap-south-1 --name brain-task-cluster
+      - kubectl apply -f k8s/deployment.yaml
+      - kubectl apply -f k8s/service.yaml
+      - echo "Deployment completed successfully"
 
 artifacts:
   files:
-    - imagedefinitions.json
-
+    - k8s/*
